@@ -1,0 +1,6 @@
+/env.json
+/.homeybuild/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/

@@ -1,0 +1,279 @@
+{
+  "triggers": [
+    {
+      "id": "soc_rises_above",
+      "title": {
+        "en": "The state of charge rises above...",
+        "nl": "De laadtoestand stijgt boven..."
+      },
+      "titleFormatted": {
+        "en": "The state of charge rises above [[soc]]%",
+        "nl": "De laadtoestand stijgt boven [[soc]]%"
+      },
+      "hint": {
+        "en": "Fires once each time the battery crosses this level going up.",
+        "nl": "Gaat eenmaal af telkens als de batterij stijgend dit niveau passeert."
+      },
+      "args": [
+        {
+          "name": "soc",
+          "type": "number",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "placeholder": {
+            "en": "80"
+          }
+        }
+      ],
+      "tokens": [
+        {
+          "name": "soc",
+          "type": "number",
+          "title": {
+            "en": "State of charge",
+            "nl": "Laadtoestand"
+          },
+          "example": 82
+        }
+      ]
+    },
+    {
+      "id": "soc_drops_below",
+      "title": {
+        "en": "The state of charge drops below...",
+        "nl": "De laadtoestand daalt onder..."
+      },
+      "titleFormatted": {
+        "en": "The state of charge drops below [[soc]]%",
+        "nl": "De laadtoestand daalt onder [[soc]]%"
+      },
+      "hint": {
+        "en": "Fires once each time the battery crosses this level going down.",
+        "nl": "Gaat eenmaal af telkens als de batterij dalend dit niveau passeert."
+      },
+      "args": [
+        {
+          "name": "soc",
+          "type": "number",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "placeholder": {
+            "en": "20"
+          }
+        }
+      ],
+      "tokens": [
+        {
+          "name": "soc",
+          "type": "number",
+          "title": {
+            "en": "State of charge",
+            "nl": "Laadtoestand"
+          },
+          "example": 18
+        }
+      ]
+    },
+    {
+      "id": "solar_power_changed",
+      "title": {
+        "en": "The solar power changed",
+        "nl": "Het zonnevermogen is veranderd"
+      },
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Solar power",
+            "nl": "Zonnevermogen"
+          },
+          "example": 3200
+        }
+      ]
+    },
+    {
+      "id": "grid_power_changed",
+      "title": {
+        "en": "The grid power changed",
+        "nl": "Het netvermogen is veranderd"
+      },
+      "hint": {
+        "en": "Positive while importing from the grid, negative while exporting.",
+        "nl": "Positief bij afname van het net, negatief bij teruglevering."
+      },
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "Grid power",
+            "nl": "Netvermogen"
+          },
+          "example": -1450
+        }
+      ]
+    },
+    {
+      "id": "house_load_changed",
+      "title": {
+        "en": "The house load changed",
+        "nl": "Het huisverbruik is veranderd"
+      },
+      "tokens": [
+        {
+          "name": "power",
+          "type": "number",
+          "title": {
+            "en": "House load",
+            "nl": "Huisverbruik"
+          },
+          "example": 740
+        }
+      ]
+    },
+    {
+      "id": "working_mode_changed",
+      "title": {
+        "en": "The working mode changed",
+        "nl": "De bedrijfsmodus is veranderd"
+      },
+      "tokens": [
+        {
+          "name": "mode",
+          "type": "string",
+          "title": {
+            "en": "Working mode",
+            "nl": "Bedrijfsmodus"
+          },
+          "example": {
+            "en": "Economic mode"
+          }
+        }
+      ]
+    },
+    {
+      "id": "fault_occurred",
+      "title": {
+        "en": "The inverter reported a fault",
+        "nl": "De omvormer meldt een storing"
+      },
+      "tokens": [
+        {
+          "name": "code",
+          "type": "number",
+          "title": {
+            "en": "Fault code",
+            "nl": "Storingscode"
+          },
+          "example": 14
+        }
+      ]
+    },
+    {
+      "id": "fault_cleared",
+      "title": {
+        "en": "The inverter fault cleared",
+        "nl": "De storing van de omvormer is verholpen"
+      }
+    }
+  ],
+  "conditions": [
+    {
+      "id": "soc_is_above",
+      "title": {
+        "en": "The state of charge !{{is|is not}} above...",
+        "nl": "De laadtoestand !{{is|is niet}} hoger dan..."
+      },
+      "titleFormatted": {
+        "en": "The state of charge !{{is|is not}} above [[soc]]%",
+        "nl": "De laadtoestand !{{is|is niet}} hoger dan [[soc]]%"
+      },
+      "args": [
+        {
+          "name": "soc",
+          "type": "number",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "placeholder": {
+            "en": "50"
+          }
+        }
+      ]
+    },
+    {
+      "id": "is_charging",
+      "title": {
+        "en": "The battery !{{is|is not}} charging",
+        "nl": "De batterij !{{laadt|laadt niet}}"
+      }
+    },
+    {
+      "id": "is_exporting",
+      "title": {
+        "en": "The house !{{is|is not}} exporting more than...",
+        "nl": "Het huis !{{levert|levert niet}} meer terug dan..."
+      },
+      "titleFormatted": {
+        "en": "The house !{{is|is not}} exporting more than [[power]] W",
+        "nl": "Het huis !{{levert|levert niet}} meer terug dan [[power]] W"
+      },
+      "args": [
+        {
+          "name": "power",
+          "type": "number",
+          "min": 0,
+          "max": 100000,
+          "step": 50,
+          "placeholder": {
+            "en": "0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "working_mode_is",
+      "title": {
+        "en": "The working mode !{{is|is not}}...",
+        "nl": "De bedrijfsmodus !{{is|is niet}}..."
+      },
+      "titleFormatted": {
+        "en": "The working mode !{{is|is not}} [[mode]]",
+        "nl": "De bedrijfsmodus !{{is|is niet}} [[mode]]"
+      },
+      "args": [
+        {
+          "name": "mode",
+          "type": "autocomplete",
+          "placeholder": {
+            "en": "Mode",
+            "nl": "Modus"
+          }
+        }
+      ]
+    },
+    {
+      "id": "has_fault",
+      "title": {
+        "en": "The inverter !{{has|does not have}} a fault",
+        "nl": "De omvormer !{{heeft|heeft geen}} storing"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "refresh",
+      "title": {
+        "en": "Read the inverter now",
+        "nl": "Lees de omvormer nu uit"
+      },
+      "hint": {
+        "en": "Polls the inverter immediately instead of waiting for the next interval.",
+        "nl": "Leest de omvormer direct uit in plaats van te wachten op het volgende interval."
+      }
+    }
+  ]
+}
