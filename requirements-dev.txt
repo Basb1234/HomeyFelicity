@@ -1,0 +1,4 @@
+# Test-time dependencies. Not used at runtime on Homey — the app's only
+# runtime dependency is declared in .homeycompose/app.json's pythonPackages.
+pytest
+pymodbus>=3.10.0
