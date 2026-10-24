@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13", "3.14"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest "pymodbus>=3.10.0"
+
+      - name: Run tests
+        run: python -m pytest tests -v
+
+  core-sync-check:
+    name: Vendored core is in sync with ha_felicity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout HomeyFelicity
+        uses: actions/checkout@v4
+        with:
+          path: HomeyFelicity
+
+      - name: Checkout ha_felicity
+        # homey-PoC is the branch that actually has the vendored source
+        # (modbus_client.py, the combined-register split, etc.) — update
+        # this ref once that work lands on ha_felicity's main.
+        uses: actions/checkout@v4
+        with:
+          repository: Basb1234/ha_felicity
+          ref: homey-PoC
+          path: ha_felicity
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Check lib/felicity_core against ha_felicity's platform-agnostic core
+        working-directory: HomeyFelicity
+        run: |
+          python tools/sync_core.py \
+            --source ../ha_felicity/custom_components/ha_felicity \
+            --check
+
+  validate:
+    name: Validate Homey app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install the Homey CLI
+        run: npm install -g homey
+
+      - name: Validate against the debug level
+        # This also regenerates app.json from .homeycompose/ on disk, which
+        # the next step relies on. `-l publish` would additionally require
+        # Docker to pre-compile pythonPackages into cross-platform venvs —
+        # left for the publish step rather than every CI run.
+        run: homey app validate -l debug
+
+      - name: Check app.json is not stale relative to .homeycompose
+        run: |
+          if ! git diff --exit-code app.json; then
+            echo "::error::app.json is out of date with .homeycompose/ — run 'homey app validate' locally and commit the result."
+            exit 1
+          fi

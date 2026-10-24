@@ -1,5 +1,7 @@
 # Felicity Home Battery — Homey app
 
+[![CI](https://github.com/Basb1234/HomeyFelicity/actions/workflows/ci.yml/badge.svg)](https://github.com/Basb1234/HomeyFelicity/actions/workflows/ci.yml)
+
 A native Python app for [Homey Pro](https://python-apps-sdk-v3.developer.homey.app/)
 that monitors a Felicity TREX home battery over Modbus TCP on your local
 network. It reads the inverter and nothing more: no registers are written, so
