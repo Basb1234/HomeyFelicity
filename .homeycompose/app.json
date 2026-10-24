@@ -1,0 +1,55 @@
+{
+  "id": "com.partach.felicity",
+  "version": "1.0.0",
+  "compatibility": ">=13.0.0",
+  "sdk": 3,
+  "runtime": "python",
+  "pythonVersion": "3.14",
+  "pythonPackages": [
+    "pymodbus>=3.10.0"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Felicity Home Battery",
+    "nl": "Felicity Thuisbatterij"
+  },
+  "description": {
+    "en": "Monitor your Felicity TREX home battery and inverter over your local network.",
+    "nl": "Volg je Felicity TREX thuisbatterij en omvormer via je lokale netwerk."
+  },
+  "category": [
+    "energy"
+  ],
+  "brandColor": "#1F9D55",
+  "tags": {
+    "en": [
+      "felicity",
+      "trex",
+      "battery",
+      "solar",
+      "inverter",
+      "modbus",
+      "energy"
+    ],
+    "nl": [
+      "felicity",
+      "trex",
+      "batterij",
+      "zonnepanelen",
+      "omvormer",
+      "modbus",
+      "energie"
+    ]
+  },
+  "permissions": [],
+  "author": {
+    "name": "partach"
+  },
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  }
+}

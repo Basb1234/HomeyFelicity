@@ -1,0 +1,204 @@
+<style>
+  .felicity-pair {
+    padding: 16px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .felicity-intro {
+    margin: 0 0 20px;
+    line-height: 1.45;
+    opacity: 0.75;
+  }
+  .felicity-row {
+    display: flex;
+    gap: 12px;
+  }
+  .felicity-row > * {
+    flex: 1;
+  }
+  .felicity-result {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    line-height: 1.45;
+    display: none;
+  }
+  .felicity-result.is-visible {
+    display: block;
+  }
+  .felicity-result.is-ok {
+    background: rgba(31, 157, 85, 0.12);
+    border: 1px solid rgba(31, 157, 85, 0.45);
+  }
+  .felicity-result.is-error {
+    background: rgba(214, 69, 65, 0.1);
+    border: 1px solid rgba(214, 69, 65, 0.45);
+  }
+  .felicity-readings {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .felicity-readings li {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+  .felicity-readings span:first-child {
+    opacity: 0.7;
+  }
+</style>
+
+<div class="felicity-pair">
+  <p class="felicity-intro" data-i18n="intro">
+    Enter the address of your inverter's Modbus TCP gateway. Homey reads the
+    inverter over your local network; nothing leaves your home.
+  </p>
+
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="host">IP address</label>
+    <input class="homey-form-input" id="host" type="text" placeholder="192.168.1.50"
+           autocomplete="off" autocapitalize="off" spellcheck="false" />
+  </div>
+
+  <div class="felicity-row">
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="port">Port</label>
+      <input class="homey-form-input" id="port" type="number" min="1" max="65535" />
+    </div>
+    <div class="homey-form-group">
+      <label class="homey-form-label" for="slave_id">Unit ID</label>
+      <input class="homey-form-input" id="slave_id" type="number" min="1" max="247" />
+    </div>
+  </div>
+
+  <div class="homey-form-group">
+    <label class="homey-form-label" for="model">Inverter model</label>
+    <select class="homey-form-select" id="model"></select>
+  </div>
+
+  <button class="homey-button-primary-full" id="submit" type="button">
+    Test connection
+  </button>
+
+  <div class="felicity-result" id="result" role="status" aria-live="polite"></div>
+</div>
+
+<script type="text/javascript">
+  const fields = {
+    host: document.getElementById('host'),
+    port: document.getElementById('port'),
+    slave_id: document.getElementById('slave_id'),
+    model: document.getElementById('model'),
+  };
+  const submit = document.getElementById('submit');
+  const result = document.getElementById('result');
+
+  function show(kind, message, readings) {
+    result.className = 'felicity-result is-visible ' + kind;
+    result.innerHTML = '';
+
+    const text = document.createElement('div');
+    text.textContent = message;
+    result.appendChild(text);
+
+    if (readings && readings.length) {
+      const list = document.createElement('ul');
+      list.className = 'felicity-readings';
+      readings.forEach(function (row) {
+        const item = document.createElement('li');
+        const label = document.createElement('span');
+        label.textContent = row[0];
+        const value = document.createElement('span');
+        value.textContent = row[1];
+        item.appendChild(label);
+        item.appendChild(value);
+        list.appendChild(item);
+      });
+      result.appendChild(list);
+    }
+  }
+
+  function readingsFrom(data) {
+    const rows = [];
+    if (typeof data.soc === 'number') {
+      rows.push(['State of charge', data.soc.toFixed(1) + ' %']);
+    }
+    if (typeof data.battery_power === 'number') {
+      const watt = Math.round(data.battery_power);
+      const verb = watt > 0 ? 'charging' : watt < 0 ? 'discharging' : 'idle';
+      rows.push(['Battery', Math.abs(watt) + ' W ' + verb]);
+    }
+    if (data.working_mode) {
+      rows.push(['Working mode', data.working_mode]);
+    }
+    return rows;
+  }
+
+  async function test() {
+    submit.disabled = true;
+    submit.textContent = 'Connecting...';
+    show('', 'Reading the inverter...');
+
+    try {
+      const data = await Homey.emit('test_connection', {
+        host: fields.host.value,
+        port: Number(fields.port.value),
+        slave_id: Number(fields.slave_id.value),
+        model: fields.model.value,
+      });
+
+      if (data && data.ok) {
+        show('is-ok', data.message, readingsFrom(data));
+        if (data.done) {
+          // Repair: the driver already saved the new address.
+          setTimeout(function () { Homey.done(); }, 900);
+        } else {
+          setTimeout(function () { Homey.showView('list_devices'); }, 600);
+        }
+        return;
+      }
+
+      show('is-error', (data && data.message) || 'Could not reach the inverter.');
+    } catch (err) {
+      show('is-error', err && err.message ? err.message : String(err));
+    } finally {
+      submit.disabled = false;
+      submit.textContent = 'Test connection';
+    }
+  }
+
+  submit.addEventListener('click', test);
+  Object.values(fields).forEach(function (field) {
+    field.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') test();
+    });
+  });
+
+  Homey.emit('get_defaults')
+    .then(function (data) {
+      const settings = (data && data.settings) || {};
+      const models = (data && data.models) || [];
+
+      models.forEach(function (model) {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        fields.model.appendChild(option);
+      });
+
+      fields.host.value = settings.host || '';
+      fields.port.value = settings.port || 502;
+      fields.slave_id.value = settings.slave_id || 1;
+      if (settings.model) fields.model.value = settings.model;
+
+      fields.host.focus();
+    })
+    .catch(function (err) {
+      show('is-error', 'Could not start pairing: ' + err);
+    })
+    .finally(function () {
+      Homey.ready();
+    });
+</script>

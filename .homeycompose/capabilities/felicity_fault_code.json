@@ -1,0 +1,17 @@
+{
+  "type": "number",
+  "title": {
+    "en": "Fault code",
+    "nl": "Storingscode"
+  },
+  "desc": {
+    "en": "The inverter's current fault code. 0 means no fault.",
+    "nl": "De huidige storingscode van de omvormer. 0 betekent geen storing."
+  },
+  "getable": true,
+  "setable": false,
+  "decimals": 0,
+  "insights": true,
+  "uiComponent": "sensor",
+  "icon": "/assets/capabilities/felicity_fault_code.svg"
+}

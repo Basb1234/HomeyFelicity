@@ -1,0 +1,854 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "com.partach.felicity",
+  "version": "1.0.0",
+  "compatibility": ">=13.0.0",
+  "sdk": 3,
+  "runtime": "python",
+  "pythonVersion": "3.14",
+  "pythonPackages": [
+    "pymodbus>=3.10.0"
+  ],
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Felicity Home Battery",
+    "nl": "Felicity Thuisbatterij"
+  },
+  "description": {
+    "en": "Monitor your Felicity TREX home battery and inverter over your local network.",
+    "nl": "Volg je Felicity TREX thuisbatterij en omvormer via je lokale netwerk."
+  },
+  "category": [
+    "energy"
+  ],
+  "brandColor": "#1F9D55",
+  "tags": {
+    "en": [
+      "felicity",
+      "trex",
+      "battery",
+      "solar",
+      "inverter",
+      "modbus",
+      "energy"
+    ],
+    "nl": [
+      "felicity",
+      "trex",
+      "batterij",
+      "zonnepanelen",
+      "omvormer",
+      "modbus",
+      "energie"
+    ]
+  },
+  "permissions": [],
+  "author": {
+    "name": "partach"
+  },
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "flow": {
+    "triggers": [
+      {
+        "id": "soc_rises_above",
+        "title": {
+          "en": "The state of charge rises above...",
+          "nl": "De laadtoestand stijgt boven..."
+        },
+        "titleFormatted": {
+          "en": "The state of charge rises above [[soc]]%",
+          "nl": "De laadtoestand stijgt boven [[soc]]%"
+        },
+        "hint": {
+          "en": "Fires once each time the battery crosses this level going up.",
+          "nl": "Gaat eenmaal af telkens als de batterij stijgend dit niveau passeert."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "name": "soc",
+            "type": "number",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "placeholder": {
+              "en": "80"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "soc",
+            "type": "number",
+            "title": {
+              "en": "State of charge",
+              "nl": "Laadtoestand"
+            },
+            "example": 82
+          }
+        ]
+      },
+      {
+        "id": "soc_drops_below",
+        "title": {
+          "en": "The state of charge drops below...",
+          "nl": "De laadtoestand daalt onder..."
+        },
+        "titleFormatted": {
+          "en": "The state of charge drops below [[soc]]%",
+          "nl": "De laadtoestand daalt onder [[soc]]%"
+        },
+        "hint": {
+          "en": "Fires once each time the battery crosses this level going down.",
+          "nl": "Gaat eenmaal af telkens als de batterij dalend dit niveau passeert."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "name": "soc",
+            "type": "number",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "placeholder": {
+              "en": "20"
+            }
+          }
+        ],
+        "tokens": [
+          {
+            "name": "soc",
+            "type": "number",
+            "title": {
+              "en": "State of charge",
+              "nl": "Laadtoestand"
+            },
+            "example": 18
+          }
+        ]
+      },
+      {
+        "id": "solar_power_changed",
+        "title": {
+          "en": "The solar power changed",
+          "nl": "Het zonnevermogen is veranderd"
+        },
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Solar power",
+              "nl": "Zonnevermogen"
+            },
+            "example": 3200
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "grid_power_changed",
+        "title": {
+          "en": "The grid power changed",
+          "nl": "Het netvermogen is veranderd"
+        },
+        "hint": {
+          "en": "Positive while importing from the grid, negative while exporting.",
+          "nl": "Positief bij afname van het net, negatief bij teruglevering."
+        },
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "Grid power",
+              "nl": "Netvermogen"
+            },
+            "example": -1450
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "house_load_changed",
+        "title": {
+          "en": "The house load changed",
+          "nl": "Het huisverbruik is veranderd"
+        },
+        "tokens": [
+          {
+            "name": "power",
+            "type": "number",
+            "title": {
+              "en": "House load",
+              "nl": "Huisverbruik"
+            },
+            "example": 740
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "working_mode_changed",
+        "title": {
+          "en": "The working mode changed",
+          "nl": "De bedrijfsmodus is veranderd"
+        },
+        "tokens": [
+          {
+            "name": "mode",
+            "type": "string",
+            "title": {
+              "en": "Working mode",
+              "nl": "Bedrijfsmodus"
+            },
+            "example": {
+              "en": "Economic mode"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "fault_occurred",
+        "title": {
+          "en": "The inverter reported a fault",
+          "nl": "De omvormer meldt een storing"
+        },
+        "tokens": [
+          {
+            "name": "code",
+            "type": "number",
+            "title": {
+              "en": "Fault code",
+              "nl": "Storingscode"
+            },
+            "example": 14
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "fault_cleared",
+        "title": {
+          "en": "The inverter fault cleared",
+          "nl": "De storing van de omvormer is verholpen"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "soc_is_above",
+        "title": {
+          "en": "The state of charge !{{is|is not}} above...",
+          "nl": "De laadtoestand !{{is|is niet}} hoger dan..."
+        },
+        "titleFormatted": {
+          "en": "The state of charge !{{is|is not}} above [[soc]]%",
+          "nl": "De laadtoestand !{{is|is niet}} hoger dan [[soc]]%"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "name": "soc",
+            "type": "number",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "placeholder": {
+              "en": "50"
+            }
+          }
+        ]
+      },
+      {
+        "id": "is_charging",
+        "title": {
+          "en": "The battery !{{is|is not}} charging",
+          "nl": "De batterij !{{laadt|laadt niet}}"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      },
+      {
+        "id": "is_exporting",
+        "title": {
+          "en": "The house !{{is|is not}} exporting more than...",
+          "nl": "Het huis !{{levert|levert niet}} meer terug dan..."
+        },
+        "titleFormatted": {
+          "en": "The house !{{is|is not}} exporting more than [[power]] W",
+          "nl": "Het huis !{{levert|levert niet}} meer terug dan [[power]] W"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "name": "power",
+            "type": "number",
+            "min": 0,
+            "max": 100000,
+            "step": 50,
+            "placeholder": {
+              "en": "0"
+            }
+          }
+        ]
+      },
+      {
+        "id": "working_mode_is",
+        "title": {
+          "en": "The working mode !{{is|is not}}...",
+          "nl": "De bedrijfsmodus !{{is|is niet}}..."
+        },
+        "titleFormatted": {
+          "en": "The working mode !{{is|is not}} [[mode]]",
+          "nl": "De bedrijfsmodus !{{is|is niet}} [[mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          },
+          {
+            "name": "mode",
+            "type": "autocomplete",
+            "placeholder": {
+              "en": "Mode",
+              "nl": "Modus"
+            }
+          }
+        ]
+      },
+      {
+        "id": "has_fault",
+        "title": {
+          "en": "The inverter !{{has|does not have}} a fault",
+          "nl": "De omvormer !{{heeft|heeft geen}} storing"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "refresh",
+        "title": {
+          "en": "Read the inverter now",
+          "nl": "Lees de omvormer nu uit"
+        },
+        "hint": {
+          "en": "Polls the inverter immediately instead of waiting for the next interval.",
+          "nl": "Leest de omvormer direct uit in plaats van te wachten op het volgende interval."
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=battery"
+          }
+        ]
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Felicity Home Battery",
+        "nl": "Felicity Thuisbatterij"
+      },
+      "class": "battery",
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "capabilities": [
+        "measure_battery",
+        "measure_power",
+        "battery_charging_state",
+        "measure_power.pv",
+        "measure_power.grid",
+        "measure_power.load",
+        "meter_power.charged",
+        "meter_power.discharged",
+        "meter_power.charged_today",
+        "meter_power.discharged_today",
+        "meter_power.pv",
+        "meter_power.pv_today",
+        "meter_power.load",
+        "meter_power.load_today",
+        "meter_power.grid_import",
+        "meter_power.grid_import_today",
+        "felicity_working_mode",
+        "felicity_fault_code",
+        "alarm_battery",
+        "alarm_generic"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "title": {
+            "en": "Battery power",
+            "nl": "Batterijvermogen"
+          },
+          "decimals": 0
+        },
+        "measure_power.pv": {
+          "title": {
+            "en": "Solar power",
+            "nl": "Zonnevermogen"
+          },
+          "decimals": 0,
+          "insights": true
+        },
+        "measure_power.grid": {
+          "title": {
+            "en": "Grid power",
+            "nl": "Netvermogen"
+          },
+          "decimals": 0,
+          "insights": true
+        },
+        "measure_power.load": {
+          "title": {
+            "en": "House load",
+            "nl": "Huisverbruik"
+          },
+          "decimals": 0,
+          "insights": true
+        },
+        "meter_power.charged": {
+          "title": {
+            "en": "Battery charged (total)",
+            "nl": "Batterij geladen (totaal)"
+          },
+          "decimals": 2
+        },
+        "meter_power.discharged": {
+          "title": {
+            "en": "Battery discharged (total)",
+            "nl": "Batterij ontladen (totaal)"
+          },
+          "decimals": 2
+        },
+        "meter_power.charged_today": {
+          "title": {
+            "en": "Battery charged today",
+            "nl": "Batterij vandaag geladen"
+          },
+          "decimals": 2
+        },
+        "meter_power.discharged_today": {
+          "title": {
+            "en": "Battery discharged today",
+            "nl": "Batterij vandaag ontladen"
+          },
+          "decimals": 2
+        },
+        "meter_power.pv": {
+          "title": {
+            "en": "Solar yield (total)",
+            "nl": "Zonopbrengst (totaal)"
+          },
+          "decimals": 2
+        },
+        "meter_power.pv_today": {
+          "title": {
+            "en": "Solar yield today",
+            "nl": "Zonopbrengst vandaag"
+          },
+          "decimals": 2
+        },
+        "meter_power.load": {
+          "title": {
+            "en": "House consumption (total)",
+            "nl": "Huisverbruik (totaal)"
+          },
+          "decimals": 2
+        },
+        "meter_power.load_today": {
+          "title": {
+            "en": "House consumption today",
+            "nl": "Huisverbruik vandaag"
+          },
+          "decimals": 2
+        },
+        "meter_power.grid_import": {
+          "title": {
+            "en": "Imported from grid (total)",
+            "nl": "Van net afgenomen (totaal)"
+          },
+          "decimals": 2
+        },
+        "meter_power.grid_import_today": {
+          "title": {
+            "en": "Imported from grid today",
+            "nl": "Vandaag van net afgenomen"
+          },
+          "decimals": 2
+        },
+        "measure_voltage.battery": {
+          "title": {
+            "en": "Battery voltage",
+            "nl": "Batterijspanning"
+          },
+          "decimals": 1
+        },
+        "measure_current.battery": {
+          "title": {
+            "en": "Battery current",
+            "nl": "Batterijstroom"
+          },
+          "decimals": 1
+        },
+        "measure_voltage.grid": {
+          "title": {
+            "en": "Grid voltage",
+            "nl": "Netspanning"
+          },
+          "decimals": 1
+        },
+        "measure_frequency.grid": {
+          "title": {
+            "en": "Grid frequency",
+            "nl": "Netfrequentie"
+          },
+          "decimals": 2
+        },
+        "measure_temperature": {
+          "title": {
+            "en": "Inverter temperature",
+            "nl": "Omvormertemperatuur"
+          },
+          "decimals": 1
+        },
+        "alarm_generic": {
+          "title": {
+            "en": "Inverter fault",
+            "nl": "Omvormerstoring"
+          }
+        },
+        "alarm_battery": {
+          "title": {
+            "en": "Battery low",
+            "nl": "Batterij laag"
+          }
+        }
+      },
+      "energy": {
+        "homeBattery": true,
+        "meterPowerImportedCapability": "meter_power.charged",
+        "meterPowerExportedCapability": "meter_power.discharged"
+      },
+      "images": {
+        "small": "/drivers/battery/assets/images/small.png",
+        "large": "/drivers/battery/assets/images/large.png",
+        "xlarge": "/drivers/battery/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "connect",
+          "navigation": {
+            "next": "list_devices"
+          }
+        },
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "repair": [
+        {
+          "id": "connect"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Connection",
+            "nl": "Verbinding"
+          },
+          "children": [
+            {
+              "id": "host",
+              "type": "text",
+              "label": {
+                "en": "IP address",
+                "nl": "IP-adres"
+              },
+              "hint": {
+                "en": "The address of the inverter's Modbus TCP gateway on your network.",
+                "nl": "Het adres van de Modbus TCP-gateway van de omvormer in je netwerk."
+              },
+              "value": ""
+            },
+            {
+              "id": "port",
+              "type": "number",
+              "label": {
+                "en": "Port",
+                "nl": "Poort"
+              },
+              "value": 502,
+              "min": 1,
+              "max": 65535
+            },
+            {
+              "id": "slave_id",
+              "type": "number",
+              "label": {
+                "en": "Modbus unit ID",
+                "nl": "Modbus unit-ID"
+              },
+              "value": 1,
+              "min": 1,
+              "max": 247
+            },
+            {
+              "id": "model",
+              "type": "dropdown",
+              "label": {
+                "en": "Inverter model",
+                "nl": "Omvormermodel"
+              },
+              "value": "T-REX-10K-P3G01",
+              "values": [
+                {
+                  "id": "T-REX-5K-P1G01",
+                  "label": {
+                    "en": "T-REX-5K-P1G01"
+                  }
+                },
+                {
+                  "id": "T-REX-10K-P3G01",
+                  "label": {
+                    "en": "T-REX-10K-P3G01"
+                  }
+                },
+                {
+                  "id": "T-REX-25KHP3G01",
+                  "label": {
+                    "en": "T-REX-25KHP3G01"
+                  }
+                },
+                {
+                  "id": "T-REX-50KHP3G01",
+                  "label": {
+                    "en": "T-REX-50KHP3G01"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Polling",
+            "nl": "Uitlezen"
+          },
+          "children": [
+            {
+              "id": "poll_interval",
+              "type": "number",
+              "label": {
+                "en": "Interval (seconds)",
+                "nl": "Interval (seconden)"
+              },
+              "hint": {
+                "en": "How often to read the inverter. Energy meters are read once a minute regardless.",
+                "nl": "Hoe vaak de omvormer wordt uitgelezen. Energiemeters worden hoe dan ook eens per minuut gelezen."
+              },
+              "value": 10,
+              "min": 5,
+              "max": 600,
+              "units": {
+                "en": "s"
+              }
+            },
+            {
+              "id": "extended_sensors",
+              "type": "checkbox",
+              "label": {
+                "en": "Extended sensors",
+                "nl": "Uitgebreide sensoren"
+              },
+              "hint": {
+                "en": "Also report battery voltage and current, grid voltage and frequency, and inverter temperature.",
+                "nl": "Rapporteer ook batterijspanning en -stroom, netspanning en -frequentie, en omvormertemperatuur."
+              },
+              "value": false
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Alarms",
+            "nl": "Alarmen"
+          },
+          "children": [
+            {
+              "id": "low_battery_soc",
+              "type": "number",
+              "label": {
+                "en": "Battery low below",
+                "nl": "Batterij laag onder"
+              },
+              "hint": {
+                "en": "Turns the battery alarm on when the state of charge drops below this.",
+                "nl": "Zet het batterijalarm aan als de laadtoestand hieronder zakt."
+              },
+              "value": 10,
+              "min": 0,
+              "max": 100,
+              "units": {
+                "en": "%"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Diagnostics",
+            "nl": "Diagnose"
+          },
+          "children": [
+            {
+              "id": "last_poll",
+              "type": "label",
+              "label": {
+                "en": "Last successful read",
+                "nl": "Laatste geslaagde uitlezing"
+              },
+              "value": "-"
+            },
+            {
+              "id": "last_error",
+              "type": "label",
+              "label": {
+                "en": "Last error",
+                "nl": "Laatste fout"
+              },
+              "value": "-"
+            }
+          ]
+        }
+      ],
+      "id": "battery"
+    }
+  ],
+  "capabilities": {
+    "felicity_fault_code": {
+      "type": "number",
+      "title": {
+        "en": "Fault code",
+        "nl": "Storingscode"
+      },
+      "desc": {
+        "en": "The inverter's current fault code. 0 means no fault.",
+        "nl": "De huidige storingscode van de omvormer. 0 betekent geen storing."
+      },
+      "getable": true,
+      "setable": false,
+      "decimals": 0,
+      "insights": true,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/felicity_fault_code.svg"
+    },
+    "felicity_working_mode": {
+      "type": "string",
+      "title": {
+        "en": "Working mode",
+        "nl": "Bedrijfsmodus"
+      },
+      "desc": {
+        "en": "The mode the inverter reports it is running in.",
+        "nl": "De modus waarin de omvormer zegt te draaien."
+      },
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/capabilities/felicity_working_mode.svg"
+    }
+  }
+}
