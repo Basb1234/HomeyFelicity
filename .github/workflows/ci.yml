@@ -76,21 +76,27 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Node.js
-        # The homey package declares "engines": { "node": ">=22" }; on an
-        # older Node, `homey app validate` dies with no useful error
-        # (observed: the step exits 130 after ~30s).
+        # The homey package's engines requirement has moved (>=22 as of
+        # 4.1.1, >=24 as of 4.6.1) and `npm install -g homey` below always
+        # fetches latest, so this has to track whatever that currently
+        # needs — on an older Node, `homey app validate` dies with no
+        # useful error (observed: the step exits 130 after ~30s).
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
 
       - name: Install the Homey CLI
-        run: npm install -g homey
+        # Pinned rather than @latest: the engines requirement above has
+        # already moved once underneath this workflow. Bump deliberately,
+        # together with node-version, rather than silently.
+        run: npm install -g homey@4.6.1
 
       - name: Validate against the debug level
         # This also regenerates app.json from .homeycompose/ on disk, which
-        # the next step relies on. `-l publish` would additionally require
-        # Docker to pre-compile pythonPackages into cross-platform venvs —
-        # left for the publish step rather than every CI run.
+        # the next step relies on. As of homey@4.6.1 this unconditionally
+        # pre-compiles pythonPackages into a Docker-built venv first (even
+        # at -l debug, unlike homey@4.1.1) — ubuntu-latest ships Docker
+        # pre-installed and running, so no extra setup is needed for that.
         run: homey app validate -l debug
 
       - name: Check app.json is not stale relative to .homeycompose
